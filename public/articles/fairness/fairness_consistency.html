@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fairness, Consistency, and Why Classroom Economies Last</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background: #fdfcf9 url('leaf_bg.jpeg') repeat;
+      color: #333;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+    header img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      color: #555;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #444;
+    }
+    ul {
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="fairness_dashboard_header.png" alt="Classroom fairness illustration" />
+    <h1>Fairness, Consistency, and Why Classroom Economies Last</h1>
+    <h2>Classroom Economy, Practical design notes for teachers</h2>
+  </header>
+  <main>
+    <p>Every teacher knows how quickly students will spot when something feels unfair. A single missed consequence, a forgotten reward, or a hint of favoritism can undo weeks of careful work. In a classroom economy, fairness and consistency aren’t just helpful, they are the system’s lifeblood.</p>
+
+    <h3>Banking tokens to keep the game clean</h3>
+    <p>In this design, tokens are “in play” only for the timetable cycle, usually a week or a fortnight. At the end of the cycle, they are banked and recorded. This creates a natural reset, no one stays stuck at the bottom, and no one can coast forever at the top. Over time, those banked totals accumulate toward bigger end of term activities such as auctions.</p>
+
+    <p>Students quickly understand the balance, immediate reinforcement sparks motivation, while delayed reinforcement sustains commitment. It mirrors how adults work for wages that arrive weekly, while also saving toward long term goals.</p>
+
+    <h3>The teacher’s role, consistency, not control</h3>
+    <p>A classroom economy only works if students believe the “referee” is fair. Teachers still hold autonomy to weight points depending on lesson design (for example, more tokens for engagement during the individual classwork chapter, fewer for a warm up task). But once the rules are set, consistency is non negotiable.</p>
+
+    <ul>
+      <li>If one student is penalized for being off task, all students should expect the same.</li>
+      <li>If tokens are awarded for a correct answer, every correct answer earns them, not just the ones the teacher notices.</li>
+      <li>If the system includes second chances, they must apply equally.</li>
+    </ul>
+
+    <h3>Why fairness drives participation</h3>
+    <p>Research shows people are motivated not only by rewards but also by fairness. The Ultimatum Game, first studied in 1982 by Werner Güth and colleagues, makes this clear. In the experiment, one player is given a sum of money and proposes a split with a second player. If the second player accepts, both keep the money, if they reject, neither gets anything. Rationally, any positive amount should be accepted, yet unfair offers are routinely rejected. People will sacrifice money to uphold fairness, evidence that perceived integrity can outweigh short term gain.</p>
+
+    <h3>A classroom story</h3>
+    <p>Imagine two Year 8 classes trialing the same economy. In the first, a teacher forgets to deduct a token from a student who breaks the rules. The others notice instantly. The signal is clear, the rules aren’t worth investing in. Participation drops.</p>
+
+    <p>In the second class, the teacher applies the rules without exception, and tokens are banked weekly so no one falls hopelessly behind. Here, the system builds its own momentum. Even students who rarely win week to week stay engaged, because they know their banked totals will matter when the auction comes.</p>
+
+    <h3>A real world parallel</h3>
+    <p>Think about taxation, people don’t just care about the rate they pay, they care whether others are paying their fair share. When they suspect corruption or inconsistent enforcement, trust erodes and compliance falls. Classroom economies rise or fall not on the size of the reward but on the integrity of the rules.</p>
+
+    <h3>References</h3>
+    <ul>
+      <li>Güth, W., Schmittberger, R., & Schwarze, B. (1982). An experimental analysis of ultimatum bargaining. Journal of Economic Behavior & Organization.</li>
+      <li>Fehr, E., & Schmidt, K. (1999). A theory of fairness, competition, and cooperation. Quarterly Journal of Economics.</li>
+      <li>Midgley, C. (1987). The role of classroom goal structure in students’ motivation. Journal of Educational Psychology.</li>
+    </ul>
+  </main>
+  <footer>
+    © <span id="year"></span> · Thoughts Unfolding
+  </footer>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

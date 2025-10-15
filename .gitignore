@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Next.js build outputs
+.next/
+out/
+
+# Env & OS junk
+.env*
+.DS_Store
+npm-debug.log*
+yarn-error.log
+.vercel/

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coin Flip Knockout — Standalone</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#111827; --ink:#e5e7eb; --muted:#94a3b8; --line:#1f2937;
+    --accent:#0ea5e9; --gold:#fbbf24; --red:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial}
+  .wrap{display:grid;grid-template-columns:360px 1fr;gap:12px;min-height:100vh}
+  aside{background:#0b1220;border-right:1px solid #0e1726;padding:12px}
+  main{display:flex;align-items:center;justify-content:center;padding:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  h1{margin:0 0 8px;font-size:18px}
+  h2{margin:0 0 8px;font-size:16px}
+  .muted{color:var(--muted)}
+  input,button,select,textarea{font:inherit}
+  input,select,textarea{background:#0e1a2f;border:1px solid #1f2937;color:#e5e7eb;border-radius:10px;padding:8px}
+  button{background:#0e1a2f;border:1px solid #1f2937;color:#e5e7eb;border-radius:10px;padding:8px 12px;cursor:pointer}
+  button.primary{background:#08243a;border-color:var(--accent);color:#dbeafe}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .pill{background:#0b1220;border:1px solid #1f2937;border-radius:999px;padding:4px 8px;font-size:12px;color:#cbd5e1}
+  .small{font-size:12px}
+  .ticker{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);background:#0e1a2f;border:1px solid #1f2937;border-radius:999px;padding:6px 10px;color:#a5b4fc;font-size:12px}
+
+  .chip{padding:6px 10px;border-radius:999px;border:1px solid #1f2937;background:#0e1a2f;cursor:pointer}
+  .chip[data-pick="H"]{outline:2px solid #f43f5e}
+  .chip[data-pick="T"]{outline:2px solid #60a5fa}
+  .panel{border:1px solid #1f2937;border-radius:12px;padding:10px}
+  .panel h3{margin:0 0 6px;font-size:14px;color:#cbd5e1}
+  .gridChips{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+  @media (min-width:520px){ .gridChips{grid-template-columns:repeat(3,1fr)} }
+
+  .stage{width:100%;max-width:920px}
+  .coinArea{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .coinWrap{perspective:1000px; perspective-origin:50% 50%; width:min(60vmin,360px); height:min(60vmin,360px); position:relative; transform:translateZ(0)}
+  .coinSpinX{position:absolute; inset:0; margin:auto; width:100%; height:100%;
+             transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform;}
+  .coin{position:absolute; inset:0; margin:auto; width:100%; height:100%;
+        transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform;}
+  .face{position:absolute; inset:0; border-radius:50%; display:flex; align-items:center; justify-content:center;
+        backface-visibility:hidden; -webkit-backface-visibility:hidden;
+        border:10px solid #0e1a2f; box-shadow:0 12px 28px rgba(0,0,0,.35) inset; transform: translateZ(0.1px);}
+  .heads{background:radial-gradient(circle at 35% 35%, #ffd166, #fbbf24 60%, #b45309);} 
+  .tails{background:radial-gradient(circle at 35% 35%, #9ca3af, #6b7280 60%, #374151); transform:rotateY(180deg) translateZ(0.1px);} 
+  .rim{position:absolute; inset:0; border-radius:50%; box-shadow:0 0 0 6px #0b1220 inset}
+  .shine{position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 0deg, rgba(255,255,255,.05), rgba(255,255,255,.25), rgba(255,255,255,.05) 60%); mix-blend-mode:overlay; pointer-events:none; animation:spinshine 2.2s linear infinite}
+  @keyframes spinshine{ to { transform:rotate(360deg) } }
+
+  .mark{width:70%; height:70%}
+  .label{position:absolute; bottom:8%; width:100%; text-align:center; color:#111827; font-weight:900; letter-spacing:2px; text-transform:uppercase; text-shadow:0 1px 0 rgba(255,255,255,0.4)}
+
+  .history{display:grid; gap:6px; margin-top:8px}
+  .histItem{display:grid; grid-template-columns:1fr auto auto auto; gap:8px;
+            align-items:center; padding:6px 8px; border-radius:8px; background:#0e1a2f; border:1px solid #1f2937}
+  .winner{font-size:18px; font-weight:800; color:#22c55e}
+
+  .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:60}
+  .backdrop.show{display:flex}
+  .qbox{background:#0f1b33; border:1px solid var(--line); border-radius:16px; padding:16px; width:min(680px,92vw)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside>
+    <div class="card">
+      <h1>Coin Flip Knockout — Standalone</h1>
+      <div class="muted small" style="margin-bottom:8px">Assign picks → Flip → losers out → repeat until one remains. <strong>No points</strong>; editable names.</div>
+
+      <div class="row small">
+        <span class="pill">Round: <b id="roundNum">1</b></span>
+        <button id="editNames" class="small">Edit names</button>
+      </div>
+
+      <div class="panel" style="margin-top:8px">
+        <h3>Active Students</h3>
+        <div class="row">
+          <input id="search" placeholder="Search…" style="flex:1"/>
+          <button id="randomSplit">Random split</button>
+          <button id="clearPicks">Clear</button>
+        </div>
+        <div id="chips" class="gridChips" style="margin-top:8px"></div>
+      </div>
+
+      <div class="panel" style="margin-top:8px">
+        <h3>Out</h3>
+        <div id="outList" class="gridChips"></div>
+      </div>
+
+      <div class="panel" style="margin-top:8px">
+        <h3>History</h3>
+        <div id="history" class="history"></div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="stage">
+      <div class="card">
+        <div class="coinArea">
+          <div class="coinWrap">
+            <div class="coinSpinX" id="coinSpinX">
+              <div class="coin" id="coin">
+                <div class="face heads">
+                  <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+                    <path d="M60 48c8 0 14-6 14-14s-6-14-14-14-14 6-14 14 6 14 14 14z" fill="#1f2937"/>
+                    <path d="M34 76c2-12 16-18 26-18s24 6 26 18v8H34v-8z" fill="#1f2937"/>
+                  </svg>
+                  <div class="label">HEADS</div>
+                </div>
+                <div class="face tails">
+                  <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+                    <circle cx="50" cy="50" r="26" fill="none" stroke="#111827" stroke-width="6"/>
+                    <path d="M50 24c0 6-6 10-6 16s6 10 6 16 6 10 6 16" fill="none" stroke="#111827" stroke-width="4"/>
+                  </svg>
+                  <div class="label">TAILS</div>
+                </div>
+                <div class="rim"></div>
+                <div class="shine"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="justify-content:center">
+            <button id="flipBtn" class="primary">Flip</button>
+            <button id="resetGame">New game</button>
+          </div>
+          <div id="result" class="small">Ready</div>
+          <div id="winner" class="winner" style="display:none; margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="ticker" id="ticker">Ready</div>
+
+<template id="editTmpl">
+  <div class="backdrop show">
+    <div class="qbox">
+      <div class="row" style="justify-content:space-between">
+        <h2>Edit names</h2>
+        <button id="closeEdit">Close</button>
+      </div>
+      <div class="small muted" style="margin-bottom:6px">One per line. Stored on this device only.</div>
+      <textarea id="namesTa" rows="12" style="width:100%"></textarea>
+      <div class="row" style="justify-content:flex-end;margin-top:8px">
+        <button id="saveNames" class="primary">Save</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+(function(){
+  const KEY_NAMES='cfk:names';
+  const $ = s => document.querySelector(s);
+  const el = (t, p={}, k=[])=>{ const d=document.createElement(t); for(const [k1,v] of Object.entries(p||{})){ if(k1==='class') d.className=v; else if(k1.startsWith('on')&&typeof v==='function') d.addEventListener(k1.slice(2).toLowerCase(), v); else d.setAttribute(k1,v);} (Array.isArray(k)?k:[k]).forEach(c=>d.append(c instanceof Node?c:document.createTextNode(c))); return d; };
+  const flash = (m)=>{ const t=$('#ticker'); t.textContent=m; t.style.opacity=1; clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity=.65,1600); };
+
+  function loadRoster(){ try{ const raw=localStorage.getItem(KEY_NAMES); const arr=raw?JSON.parse(raw):null; if(Array.isArray(arr)&&arr.length) return arr; }catch(e){} return ['Ava','Ben','Cara','Dax','Eli','Finn','Gia','Hugo']; }
+  function saveRoster(a){ try{ localStorage.setItem(KEY_NAMES, JSON.stringify(a)); }catch(e){} }
+
+  let round = 1;
+  let active = loadRoster();
+  let picks = {};
+  let out = [];
+  let history = [];
+  let currFace = 'H';
+
+  function renderChips(){
+    const box=$('#chips'); const q=($('#search').value||'').toLowerCase(); box.innerHTML='';
+    active.filter(n=>n.toLowerCase().includes(q)).forEach(n=>{
+      const p=picks[n]||'';
+      const label = p==='H' ? 'Heads' : (p==='T' ? 'Tails' : '');
+      const c=el('button',{class:'chip', 'data-pick': p||'', onClick:()=>{ picks[n]=p==='H'?'T':'H'; renderChips(); }},
+                 n + (label ? ' · '+label : ''));
+      box.append(c);
+    });
+    $('#outList').innerHTML='';
+    out.forEach(n=> $('#outList').append(el('div',{class:'chip'},n)));
+    $('#roundNum').textContent = String(round);
+  }
+  function renderHistory(){
+    const box=$('#history'); box.innerHTML='';
+    history.slice(-8).reverse().forEach(h=>{
+      box.append(el('div',{class:'histItem'},[
+        el('div',{}, 'Round '+h.round),
+        el('div',{}, 'Result: '+(h.result==='H'?'Heads':'Tails')),
+        el('div',{}, 'Survivors: '+h.survivors),
+        el('div',{}, new Date(h.ts).toLocaleTimeString())
+      ]));
+    });
+  }
+  function canFlip(){
+    const vals = Object.values(picks);
+    return vals.includes('H') && vals.includes('T');
+  }
+
+  function setFinalOrientation(face){
+    const coin=$('#coin'), spinX=$('#coinSpinX');
+    coin.style.transform = 'rotateY('+(face==='H'?0:180)+'deg)';
+    spinX.style.transform = 'rotateX(0deg) rotateZ(0deg)';
+  }
+
+  let flipping=false;
+  $('#flipBtn').addEventListener('click', ()=>{
+    if(flipping) return;
+    if(!canFlip()) { flash('Need both sides represented'); return; }
+    flipping=true;
+
+    const coin=$('#coin');
+    const spinX=$('#coinSpinX');
+    coin.getAnimations().forEach(a=>a.cancel());
+    spinX.getAnimations().forEach(a=>a.cancel());
+
+    const startY = (currFace==='H'?0:180);
+
+    const res = Math.random()<0.5 ? 'H' : 'T';
+    const targetY = startY + (res==='H' ? (360*3) : (360*3+180));
+    const flipsX = 3 + Math.floor(Math.random()*3);
+    const targetX = 360*flipsX;
+    const twistZ = (Math.random()*16 - 8);
+
+    const opts = {duration: 1450, easing: 'cubic-bezier(.2,.7,.1,1)', fill: 'forwards'};
+
+    coin.animate([{transform:`rotateY(${startY}deg)`},{transform:`rotateY(${targetY}deg)`}], opts);
+    spinX.animate([{transform:`rotateX(0deg) rotateZ(0deg)`},{transform:`rotateX(${targetX}deg) rotateZ(${twistZ}deg)`}], opts).addEventListener('finish', ()=>{
+      currFace = res;
+      setFinalOrientation(res);
+      flipping=false;
+
+      const survivors = active.filter(n => picks[n]===res);
+      const eliminated = active.filter(n => picks[n]!==res);
+      out = out.concat(eliminated);
+      active = survivors;
+      const resultText = 'Result: <b>'+(res==='H'?'Heads':'Tails')+'</b> — '
+        + (active.length>1 ? (active.length+' survive') : (active.length===1 ? ('Winner: <b>'+active[0]+'</b>') : 'No survivors? (check picks)'));
+      $('#result').innerHTML = resultText;
+      history.push({round, result:res, survivors:active.length, ts:Date.now()});
+      renderHistory(); renderChips();
+      if(active.length===1){
+        const w=active[0];
+        $('#winner').style.display='block';
+        $('#winner').textContent='🏆 '+w+' wins';
+      }else if(active.length>1){
+        round += 1; picks = {}; $('#winner').style.display='none';
+        $('#result').innerHTML = resultText + ' — Round '+round+' — set picks';
+        renderChips();
+      }
+    }, {once:true});
+  });
+
+  $('#resetGame').addEventListener('click', ()=>{
+    round = 1; active = loadRoster(); picks={}; out=[]; history=[]; currFace='H';
+    $('#result').textContent='Ready'; $('#winner').style.display='none';
+    setFinalOrientation('H'); renderChips(); renderHistory();
+  });
+
+  $('#search').addEventListener('input', renderChips);
+  $('#randomSplit').addEventListener('click', ()=>{
+    if(active.length < 2){ flash('Need at least 2 active students'); return; }
+    picks={};
+    const shuffled=[...active].sort(()=>Math.random()-0.5);
+    const mid=Math.ceil(shuffled.length/2);
+    const left=shuffled.slice(0,mid), right=shuffled.slice(mid);
+    left.forEach(n=> picks[n]='H'); right.forEach(n=> picks[n]='T');
+    renderChips();
+    flash(`Split set: Heads ${left.length} · Tails ${right.length}`);
+  });
+  $('#clearPicks').addEventListener('click', ()=>{ picks={}; renderChips(); });
+
+  // Edit names modal
+  $('#editNames').addEventListener('click', ()=>{
+    const tpl = document.querySelector('#editTmpl').content.firstElementChild.cloneNode(true);
+    const ta = tpl.querySelector('#namesTa'); ta.value = active.join('\n');
+    tpl.querySelector('#saveNames').addEventListener('click', ()=>{
+      const next = ta.value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+      if(next.length<2){ alert('Add at least two names.'); return; }
+      active = next; saveRoster(active);
+      round = 1; picks={}; out=[]; history=[]; currFace='H';
+      setFinalOrientation('H'); renderChips(); renderHistory();
+      tpl.remove(); flash('Names saved');
+    });
+    tpl.querySelector('#closeEdit').addEventListener('click', ()=>tpl.remove());
+    document.body.appendChild(tpl);
+  });
+
+  setFinalOrientation('H');
+  renderChips();
+  renderHistory();
+  flash('Ready');
+})();</script>
+</body>
+</html>

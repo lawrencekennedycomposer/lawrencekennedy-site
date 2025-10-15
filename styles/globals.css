@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth fonts */
+html, body { height: 100%; }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* Fallback first for maximum compatibility */
+.hero-background {
+  width: 100%;
+  min-height: 100vh;           /* make sure it fills the screen */
+  background-color: #e7e1d6;   /* soft beige safety fill */
+  background-image:
+    url("/img/leaf_extra_fine_desktop.webp"),
+    url("/img/leaf_extra_fine_desktop.png");  /* PNG fallback */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Upgrade to responsive + modern if the browser supports it (WebKit + standard) */
+@supports (background-image: -webkit-image-set(url("") 1x)) or (background-image: image-set(url("") 1x)) {
+  .hero-background {
+    background-image:
+      -webkit-image-set(
+        url("/img/leaf_extra_fine_mobile.webp") 1x,
+        url("/img/leaf_extra_fine_tablet.webp") 2x,
+        url("/img/leaf_extra_fine_desktop.webp") 3x
+      ),
+      image-set(
+        url("/img/leaf_extra_fine_mobile.webp") type("image/webp") 768w,
+        url("/img/leaf_extra_fine_tablet.webp") type("image/webp") 1280w,
+        url("/img/leaf_extra_fine_desktop.webp") type("image/webp") 1920w
+      );
+  }
+}
+/* Main page hero background (works everywhere) */
+.hero-portrait-main {
+  width: 100%;
+  min-height: 100vh;          /* fill the screen */
+  background-color: #ffffff;  /* pure white safety fill */
+  background-image:
+    url("/img/portrait/portrait_main_desktop.webp"),
+    url("/img/portrait/portrait_main_desktop.png"); /* PNG fallback */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* If the browser supports image-set, upgrade to responsive sources */
+@supports (background-image: -webkit-image-set(url("") 1x)) or (background-image: image-set(url("") 1x)) {
+  .hero-portrait-main {
+    background-image:
+      -webkit-image-set(
+        url("/img/portrait/portrait_main_mobile.webp") 768w,
+        url("/img/portrait/portrait_main_tablet.webp") 1280w,
+        url("/img/portrait/portrait_main_desktop.webp") 1920w
+      ),
+      image-set(
+        url("/img/portrait/portrait_main_mobile.webp") type("image/webp") 768w,
+        url("/img/portrait/portrait_main_tablet.webp") type("image/webp") 1280w,
+        url("/img/portrait/portrait_main_desktop.webp") type("image/webp") 1920w
+      );
+  }
+}
+/* Spiral background (responsive, with PNG fallbacks) */
+.hero-spiral {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #e7e1d6; /* soft beige safety fill */
+  background-image:
+    url("/img/spiral/spiral-master.webp"),
+    url("/img/spiral/spiral-master.png"); /* PNG fallback */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Upgrade to responsive sources if supported */
+@supports (background-image: -webkit-image-set(url("") 1x)) or (background-image: image-set(url("") 1x)) {
+  .hero-spiral {
+    background-image:
+      -webkit-image-set(
+        url("/img/spiral/spiral-480.webp") 480w,
+        url("/img/spiral/spiral-768.webp") 768w,
+        url("/img/spiral/spiral-master.webp") 1920w
+      ),
+      image-set(
+        url("/img/spiral/spiral-480.webp") type("image/webp") 480w,
+        url("/img/spiral/spiral-768.webp") type("image/webp") 768w,
+        url("/img/spiral/spiral-master.webp") type("image/webp") 1920w
+      );
+  }
+}
+
