@@ -8,7 +8,7 @@ export default function AdventuresPage() {
     },
     {
       title: "Borneo: Between Paradise and Reality",
-      href: "/travel/borneo/Borneo_Between_Paradise_and_Reality_full.html",
+      href: "/travel/Borneo/Borneo_Between_Paradise_and_Reality_full.html",
       newTab: true, // 👈 added this flag
     },
   ];
