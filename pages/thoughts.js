@@ -10,6 +10,11 @@ export default function ThoughtsPage() {
       title: "The Dopamine Economy",
       href: "/thoughts/dopamine/The_Dopamine_Economy_Web_Optimised.pdf",
     },
+        {
+      title: "The Death of The Priest",
+      href: "/thoughts/the_death_of_the_priest/the-death-of-the-priest-v3.html",
+    },
+    
     // Add more later as needed
   ];
 

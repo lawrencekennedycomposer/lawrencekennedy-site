@@ -2,21 +2,69 @@ import Link from "next/link";
 
 export default function AdventuresPage() {
   const articles = [
+    // 1) existing
     {
       title: "Travel Recipes",
       href: "/travel/recipes",
     },
+
+    // 2) new
+    {
+      title: "Nha-Trang",
+      href: "/travel/nhatrang/index.html",
+      newTab: true,
+    },
+
+    // 3) new
+    {
+      title: "Hue - coming soon",
+      href: "#",
+    },
+
+    // 4) new
+    {
+      title: "Journey to Vientiane - coming soon",
+      href: "#",
+    },
+
+    // 5) new
+    {
+      title: "Vang Vieng - coming soon",
+      href: "#",
+    },
+
+    // 6) today’s article (live)
+    {
+      title: "Tat Lo: Life at the Right Speed",
+      href: "/travel/tatlo/index.html",
+      newTab: true,
+    },
+
+    // 7) new
+    {
+      title: "Phnom Penh - coming soon",
+      href: "#",
+    },
+
+    // 8) new
+    {
+      title: "Siem Reap - coming soon",
+      href: "#",
+    },
+
+    // 9) existing (opens in new tab)
     {
       title: "Borneo: Between Paradise and Reality",
       href: "/travel/Borneo/Borneo_Between_Paradise_and_Reality_full.html",
-      newTab: true, // 👈 added this flag
+      newTab: true,
     },
   ];
 
-  // Playlist link goes separately at the bottom
+  // 10) existing
   const playlist = {
     title: "Travel Video Playlist",
     href: "https://youtube.com/playlist?list=PLClRwhpsLj3QlVcx2iQSr4MUiC0zC6slA&si=qQ14agB9-YGShxrj",
+    newTab: true,
   };
 
   return (
@@ -44,7 +92,7 @@ export default function AdventuresPage() {
           <a
             key={i}
             href={a.href}
-            target={a.newTab ? "_blank" : "_self"} // 👈 this line opens Borneo in new tab only
+            target={a.newTab ? "_blank" : "_self"} // Borneo opens in new tab only
             rel={a.newTab ? "noopener noreferrer" : undefined}
             className="w-full bg-white/20 text-black py-8 px-6 rounded-lg shadow-md hover:bg-white/30 transition text-center text-xl md:text-2xl"
           >
@@ -65,4 +113,3 @@ export default function AdventuresPage() {
     </div>
   );
 }
-
